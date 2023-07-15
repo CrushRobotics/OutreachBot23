@@ -1,0 +1,4 @@
+1. Intake subsystem and commands
+2. Hopper subsystem and commands
+3. Ball loading subsystem and commands
+4. Launching subsystem and commands 
