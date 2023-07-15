@@ -69,7 +69,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     public void arcadeDrive(double fwd, double rot)
     {
-        diffDrive.arcadeDrive(fwd * dampenFactor, rot);
+        diffDrive.arcadeDrive(fwd, rot);
         //diffDrive.arcadeDrive(limiter.calculate(fwd), rot);
     }
 
