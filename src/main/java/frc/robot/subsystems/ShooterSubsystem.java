@@ -9,10 +9,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class ShooterSubsystem extends SubsystemBase {
     
-    private TalonSRX shooterController;
     
     // TODO: this value is placeholder. fix it later
-    shooterController = new TalonSRX(1);
+    TalonSRX shooterController = new TalonSRX(1);
 
     shooterController.setNeutralMode(NeutralMode.Brake);
 

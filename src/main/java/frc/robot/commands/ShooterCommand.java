@@ -9,7 +9,7 @@ public class ShooterCommand extends CommandBase {
     final private XboxController controller;
     final private ShooterSubsystem shooterSubsystem;
 
-    public DefaultShooterCommand(XboxController controller, ShooterSubsystem shooterSubsystem) {
+    public ShooterCommand(XboxController controller, ShooterSubsystem shooterSubsystem) {
         this.controller = controller;
         this.shooterSubsystem = shooterSubsystem;
         this.addRequirements(shooterSubsystem);
