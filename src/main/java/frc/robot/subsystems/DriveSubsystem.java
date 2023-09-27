@@ -1,12 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVPhysicsSim;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -27,17 +21,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.Constants.DriveConstants;
 
 public class DriveSubsystem extends SubsystemBase {
     double WHEEL_DIAMETER = Units.inchesToMeters(5); 
     double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     double WHEEL_GEAR_RATIO = .75;
-    double dampenFactor = DriveConstants.dampenFactor;
 
     DifferentialDriveOdometry odometry;
   
-    AHRS gyro;
 
     MotorControllerGroup motorControllerGroupLeft;
     MotorControllerGroup motorControllerGroupRight;
@@ -45,8 +36,6 @@ public class DriveSubsystem extends SubsystemBase {
 
     Field2d field = new Field2d();
 
-    RelativeEncoder leftEncoder;
-    RelativeEncoder rightEncoder;
 
     TalonSRX leftLeader;
     TalonSRX leftMotor;
@@ -77,63 +66,16 @@ public class DriveSubsystem extends SubsystemBase {
 
         diffDrive = new DifferentialDrive(motorControllerGroupRight, motorControllerGroupLeft);
 
-        gyro = new AHRS(SPI.Port.kMXP);
-
-        leftEncoder = leftLeader.getEncoder();
-        rightEncoder = rightLeader.getEncoder();
-
-        // Set the conversion factor for position using computed distance per pulse
-        leftEncoder.setPositionConversionFactor(Constants.DriveConstants.kEncoderDistancePerPulse);
-        rightEncoder.setPositionConversionFactor(Constants.DriveConstants.kEncoderDistancePerPulse);
-
-        // Set the conversion factor for velocity so that we get meters per second instead of RPMs
-        leftEncoder.setVelocityConversionFactor(Constants.DriveConstants.kEncoderDistancePerPulse);
-        rightEncoder.setVelocityConversionFactor(Constants.DriveConstants.kEncoderDistancePerPulse);
 
         // Make sure encoders are reset to 0
         resetEncoders();
 
-        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
-        
-        if (Robot.isSimulation()) {
-            diffDriveSim = new DifferentialDrivetrainSim(
-                DriveConstants.kDrivetrainPlant,
-                DriveConstants.kDriveGearbox,
-                DriveConstants.kDriveGearing,
-                DriveConstants.kTrackwidthMeters,
-                DriveConstants.kWheelDiameterMeters / 2.0,
-                VecBuilder.fill(0, 0, 0.0001, 0.1, 0.1, 0.005, 0.005));
-
-                
-            /* 
-            leftEncoderSim = new EncoderSim(leftEncoder);
-            rightEncoderSim = new EncoderSim(rightEncoder);
-            REVPhysicsSim.getInstance().addSparkMax(motorFrontLeft, DCMotor.getNEO(1));
-            REVPhysicsSim.getInstance().addSparkMax(motorFrontRight, DCMotor.getNEO(1));
-            REVPhysicsSim.getInstance().addSparkMax(motorRearLeft, DCMotor.getNEO(1));
-            REVPhysicsSim.getInstance().addSparkMax(motorRearRight, DCMotor.getNEO(1));
-            */
-
-            REVPhysicsSim.getInstance().addSparkMax(leftLeader, DCMotor.getNEO(3));
-            REVPhysicsSim.getInstance().addSparkMax(rightLeader, DCMotor.getNEO(3));
-
-            
-            SmartDashboard.putData("Field", field);
-
-        }
 
     }
 
     @Override
     public void periodic() {
-        odometry.update(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
-        field.setRobotPose(odometry.getPoseMeters());
-
         
-        // Log dashboard values
-        SmartDashboard.putNumber("Drive Left Position", leftEncoder.getPosition());
-        SmartDashboard.putNumber("Drive Right Position", rightEncoder.getPosition());
-        SmartDashboard.putNumber("Roll", gyro.getRoll());
 
         // TANK DRIVE CODE 
         /*
@@ -156,8 +98,6 @@ public class DriveSubsystem extends SubsystemBase {
         
         
         diffDriveSim.update(0.020);
-
-        REVPhysicsSim.getInstance().run();
         /* 
         leftEncoderSim.setDistance(diffDriveSim.getLeftPositionMeters());
         leftEncoderSim.setRate(diffDriveSim.getLeftVelocityMetersPerSecond());
@@ -173,29 +113,16 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void resetEncoders()
     {
-        leftEncoder.setPosition(0);
-        rightEncoder.setPosition(0);
     }
 
     public Pose2d getPose()
     {
         return odometry.getPoseMeters();
     }
-
-    public DifferentialDriveWheelSpeeds getWheelSpeeds()
-    {
-        return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
-    }
-
-    public void resetOdometry(Pose2d pose)
-    {
-        resetEncoders();
-        odometry.resetPosition(gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), pose);
-    }
     
     public void arcadeDrive(double fwd, double rot)
     {
-        diffDrive.arcadeDrive(fwd * dampenFactor, rot);
+        //diffDrive.arcadeDrive(fwd , rot);
         //diffDrive.arcadeDrive(limiter.calculate(fwd), rot);
     }
 
@@ -206,64 +133,25 @@ public class DriveSubsystem extends SubsystemBase {
         diffDrive.feed();
     }
 
-    public double getAverageEncoderDistance()
-    {
-        return (leftEncoder.getPosition() + rightEncoder.getPosition()) / 2.0;
-    }
-
     public void setMaxOutput(double maxOutput)
     {
         diffDrive.setMaxOutput(maxOutput);
     }
 
-    public void zeroHeading()
-    {
-        gyro.reset();
-    }
-
-    public double getHeading()
-    {
-        return gyro.getRotation2d().getDegrees();
-    }
-
-    public double getRoll()
-    {
-        return gyro.getRoll();
-    }
-
-    public double getTurnRate()
-    {
-        return -gyro.getRate();
-    }
 
     public void setTurnSpeed(double turnSpeed)
     {
         diffDrive.curvatureDrive(0, turnSpeed, true);
     }
 
-    public double getLeftPosition()
-    {
-        return leftEncoder.getPosition();
-    }
-
-    public double getRightPosition()
-    {
-        return rightEncoder.getPosition();
-    }
-
-    public void setDampenFactor(double dampen)
-    {
-        dampenFactor = dampen;
-    }
-
     public void setBrakeMode(boolean isBrake)
     {
         if (isBrake)
         {
-            leftLeader.setIdleMode(IdleMode.kBrake);
+            //leftLeader.setIdleMode(IdleMode.kBrake);
         }
         else {
-            leftLeader.setIdleMode(IdleMode.kBrake);
+            //leftLeader.setIdleMode(IdleMode.kBrake);
         }
     }
 }

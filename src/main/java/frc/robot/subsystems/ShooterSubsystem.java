@@ -12,8 +12,8 @@ public class ShooterSubsystem extends SubsystemBase {
     
     // TODO: this value is placeholder. fix it later
     TalonSRX shooterController = new TalonSRX(1);
-
-    shooterController.setNeutralMode(NeutralMode.Brake);
+    
+    //shooterController.setNeutralMode(NeutralMode.Brake);
 
     public void shoot(boolean button) {
         if(button == true) {
