@@ -54,12 +54,12 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void init() {
         // TODO: renumber these motor controllers with the correct ID's
-        leftLeader = new TalonSRX(2);
-        leftMotor = new TalonSRX(3);
+        leftLeader = new TalonSRX(0);
+        leftMotor = new TalonSRX(1);
         leftMotor.follow(leftLeader);
         
-        rightLeader = new TalonSRX(4);
-        rightMotor = new TalonSRX(5);
+        rightLeader = new TalonSRX(2);
+        rightMotor = new TalonSRX(3);
         rightMotor.follow(rightLeader);
 
         rightLeader.setInverted(true);

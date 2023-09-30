@@ -8,8 +8,12 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.StartShooterCommand;
+import frc.robot.commands.StopShooterCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -25,6 +29,8 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private final DriveSubsystem m_DriveSubsystem = new DriveSubsystem();
+
+  private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
 
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -52,7 +58,10 @@ public class RobotContainer {
         .onTrue(new ExampleCommand(m_exampleSubsystem));
 
     m_DriveSubsystem.setDefaultCommand(new DefaultDriveCommand(m_driverController, m_DriveSubsystem));
+   // m_ShooterSubsystem.setDefaultCommand(new ShooterCommand(m_driverController, m_ShooterSubsystem));
 
+    m_driverController.y().onTrue(new StartShooterCommand(m_ShooterSubsystem));
+    m_driverController.y().onFalse(new StopShooterCommand(m_ShooterSubsystem));
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
