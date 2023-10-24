@@ -35,10 +35,14 @@ public class DefaultDriveCommand extends CommandBase {
     double rightSpeed = (forw - turn);
 
     */
-    double fwd = controller.getLeftY();
-    double rot = controller.getRightX();
+    double left = controller.getLeftY();
+    double right = controller.getRightY();
 
-    driveSubsystem.arcadeDrive(fwd, rot);
+    left *= 0.5;
+    right *= 0.5;
+
+    driveSubsystem.tankDrive(left, right);
+    //driveSubsystem.arcadeDrive(fwd, rot);
 
   }
 }

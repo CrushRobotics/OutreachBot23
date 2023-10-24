@@ -11,7 +11,7 @@ public class ShooterSubsystem extends SubsystemBase {
     
     
     // TODO: this value is placeholder. fix it later
-    TalonSRX shooterController = new TalonSRX(4);
+    TalonSRX shooterController = new TalonSRX(2);
     
     //shooterController.setNeutralMode(NeutralMode.Brake);
 

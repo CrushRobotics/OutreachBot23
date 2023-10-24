@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.VecBuilder;
@@ -51,20 +52,24 @@ public class DriveSubsystem extends SubsystemBase {
     // Limiter used to limit how fast velocity is allowed to change
     final SlewRateLimiter limiter = new SlewRateLimiter(1.5);
 
+    public DriveSubsystem()
+    {
+        init();
+    }
 
     public void init() {
         // TODO: renumber these motor controllers with the correct ID's
-        leftLeader = new TalonSRX(0);
-        leftMotor = new TalonSRX(1);
+        leftLeader = new TalonSRX(3);
+        leftMotor = new TalonSRX(4);
         leftMotor.follow(leftLeader);
         
-        rightLeader = new TalonSRX(2);
-        rightMotor = new TalonSRX(3);
+        rightLeader = new TalonSRX(0);
+        rightMotor = new TalonSRX(1);
         rightMotor.follow(rightLeader);
 
         rightLeader.setInverted(true);
 
-        diffDrive = new DifferentialDrive(motorControllerGroupRight, motorControllerGroupLeft);
+        //diffDrive = new DifferentialDrive(motorControllerGroupRight, motorControllerGroupLeft);
 
 
         // Make sure encoders are reset to 0
@@ -111,6 +116,11 @@ public class DriveSubsystem extends SubsystemBase {
         diffDrive.tankDrive(leftOutput, rightOutput);
     }
 
+    public void tankDrive(double left, double right) {
+        leftLeader.set(ControlMode.PercentOutput, left);
+        rightLeader.set(ControlMode.PercentOutput, right);
+    }
+
     public void resetEncoders()
     {
     }
@@ -124,6 +134,8 @@ public class DriveSubsystem extends SubsystemBase {
     {
         //diffDrive.arcadeDrive(fwd , rot);
         //diffDrive.arcadeDrive(limiter.calculate(fwd), rot);
+
+        
     }
 
     public void tankDriveVolts(double left, double right)
