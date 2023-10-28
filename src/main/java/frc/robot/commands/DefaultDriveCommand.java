@@ -35,14 +35,55 @@ public class DefaultDriveCommand extends CommandBase {
     double rightSpeed = (forw - turn);
 
     */
+    boolean otherDrive = (false);
+    
+    /* 
+    if(controller.getAButtonReleased() == true){
+        if (otherDrive == false){
+          otherDrive = true;
+        }
+        else{
+          otherDrive = false;
+        }
+    }
+    */
+
+
+  /* 
     double left = controller.getLeftY();
     double right = controller.getRightY();
 
-    left *= 0.5;
-    right *= 0.5;
+    left = left * 0.4;
+    right = right * 0.4;
+
+    // Decrease the speed if bumper is pressed
+    if (controller.rightBumper().getAsBoolean())
+    {
+      left = left * 0.5;
+      right = right * 0.5;
+    }
+
 
     driveSubsystem.tankDrive(left, right);
     //driveSubsystem.arcadeDrive(fwd, rot);
+    //nice
+  */
+
+
+    double xAxis = controller.getRightX();
+    double yAxis = controller.getLeftY();
+
+    xAxis = xAxis * 0.5;
+    yAxis = yAxis * 0.5;
+
+     // Decrease the speed if bumper is pressed
+     if (controller.rightBumper().getAsBoolean())
+     {
+       xAxis = xAxis * 0.5;
+       yAxis = yAxis * 0.5;
+     }
+
+    driveSubsystem.arcadeDrive(xAxis, yAxis);
 
   }
 }

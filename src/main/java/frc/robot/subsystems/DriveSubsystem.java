@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -68,6 +67,7 @@ public class DriveSubsystem extends SubsystemBase {
         rightMotor.follow(rightLeader);
 
         rightLeader.setInverted(true);
+        rightMotor.setInverted(true);
 
         //diffDrive = new DifferentialDrive(motorControllerGroupRight, motorControllerGroupLeft);
 
@@ -121,6 +121,38 @@ public class DriveSubsystem extends SubsystemBase {
         rightLeader.set(ControlMode.PercentOutput, right);
     }
 
+    public void arcadeDrive (double rotate, double drive){
+        double maximum;
+        double total;
+        double difference;
+
+        maximum = Math.max(Math.abs(drive), Math.abs(rotate));
+        total = drive + rotate;
+        difference = drive - rotate;
+
+        if (drive >= 0){
+            if (rotate >= 0){
+                leftLeader.set(ControlMode.PercentOutput, maximum);
+                rightLeader.set(ControlMode.PercentOutput, difference);
+            }else{
+                leftLeader.set(ControlMode.PercentOutput, total);
+                rightLeader.set(ControlMode.PercentOutput, maximum);
+            }
+         }else{
+            if (rotate >= 0){
+                leftLeader.set(ControlMode.PercentOutput, total);
+                rightLeader.set(ControlMode.PercentOutput, -maximum);
+
+            }else{
+                leftLeader.set(ControlMode.PercentOutput, -maximum);
+                rightLeader.set(ControlMode.PercentOutput, difference);
+            }
+         }
+
+
+
+
+    }
     public void resetEncoders()
     {
     }
@@ -128,14 +160,6 @@ public class DriveSubsystem extends SubsystemBase {
     public Pose2d getPose()
     {
         return odometry.getPoseMeters();
-    }
-    
-    public void arcadeDrive(double fwd, double rot)
-    {
-        //diffDrive.arcadeDrive(fwd , rot);
-        //diffDrive.arcadeDrive(limiter.calculate(fwd), rot);
-
-        
     }
 
     public void tankDriveVolts(double left, double right)
